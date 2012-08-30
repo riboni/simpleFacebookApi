@@ -149,6 +149,11 @@ class FacebookAuthenticator{
       $this -> setSession($session, $writeCookie);
     }
     if( !empty( $this -> session ) ){
+      //Check if the current session has expired;
+      if( isset( $this -> session['expires'] ) && $this -> session['expires'] <= time() ){
+        $this -> setSession(null, true);
+        return false;
+      }
       return $this -> session;
     }else{
       return false;
@@ -156,11 +161,17 @@ class FacebookAuthenticator{
   }
 
   function getUser(){
+    if( $this -> canRun === false ){
+      return false;
+    }
     $session = $this -> getSession();
     return $session ? $session['uid'] : null;
   }
 
-  public function getUserId(){
+  function getUserId(){
+    if( $this -> canRun === false ){
+      return false;
+    }
     $uid = $this -> getUser();
     if( !empty( $uid ) ){
       return $uid;
@@ -169,7 +180,10 @@ class FacebookAuthenticator{
     }
   }
 
-  public function getUserInfo($key = false){
+  function getUserInfo($key = false){
+    if( $this -> canRun === false ){
+      return false;
+    }
     if( !$this -> getSession() ){
       return false;
     }
@@ -185,7 +199,10 @@ class FacebookAuthenticator{
     }
   }
 
-  public function getLoginUrl($permissionArray = false, $okRedirectUrl = false, $errorRedirectUrl = false){
+  function getLoginUrl($permissionArray = false, $okRedirectUrl = false, $errorRedirectUrl = false){
+    if( $this -> canRun === false ){
+      return false;
+    }
     $apiArray = array();
     //Make the permission array;
     if( is_array($this->defaultPermissions) && sizeof($this->defaultPermissions) > 0 ){
@@ -241,6 +258,9 @@ class FacebookAuthenticator{
   }
 
   function getLogoutUrl($params = array()){
+    if( $this -> canRun === false ){
+      return false;
+    }
     $session = $this -> getSession();
     if( isset( $params['next'] ) && $params['next'] != false ){
       $nextUrl = $params['next'];
@@ -506,7 +526,10 @@ class FacebookAuthenticator{
     return md5( $baseString );
   }
 
-  public function hasPermission($permission){
+  function hasPermission($permission){
+    if( $this -> canRun === false ){
+      return false;
+    }
     if( !$this -> getSession() ){
       return false;
     }
@@ -520,7 +543,10 @@ class FacebookAuthenticator{
     }
   }
 
-  public function postWall($message = false, $name = false, $description = false, $caption = false, $picture = false, $link = false){
+  function postWall($message = false, $name = false, $description = false, $caption = false, $picture = false, $link = false){
+    if( $this -> canRun === false ){
+      return false;
+    }
     if( !$this -> getSession() ){
       return false;
     }
