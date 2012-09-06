@@ -160,6 +160,15 @@ class FacebookAuthenticator{
     }
   }
 
+  function isValidSession(){
+    $currentUserId = $this -> getUserInfo('id');
+    if( !empty( $currentUserId ) ){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   function getUser(){
     if( $this -> canRun === false ){
       return false;
